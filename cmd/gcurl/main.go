@@ -17,7 +17,6 @@ func init() {
 	if len(os.Args) == 1 {
 		runRepl = true
 	}
-	fmt.Println(os.Args)
 }
 
 func main() {
