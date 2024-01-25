@@ -1,153 +1,63 @@
 package req
 
 import (
-	"encoding/json"
+	"bytes"
 	"errors"
 	"fmt"
-	"log"
-	"net/url"
-	"strconv"
-	"strings"
+	"net/http"
 )
 
-type request struct {
-	url      *url.URL //if url is given, remove default port
-	port     int      //used to override default
-	path     string
+type Request struct {
+	headers  map[string]string
+	cookies  map[string]string
 	method   string
 	body     []byte
 	encoding string
-	headers
+
+	reqUrl
 }
 
-type headers struct {
-	contentType string
+type reqUrl struct {
+	scheme   string
+	user     string
+	host     string
+	port     string
+	path     string
+	query    string
+	fragment string
 }
 
-var R request = request{
-	method: "GET",
-	port:   8080,
-	headers: headers{
-		contentType: "application/json",
-	},
-}
-
-func init() {
-	u, err := url.ParseRequestURI("http://localhost.com:8080")
-	fmt.Println("first")
-	if err != nil {
-		log.Fatal("Failed to init program url")
-	} else {
-		R.url = u
+func NewRequestWrapper() *Request {
+	r := Request{
+		method:  "GET",
+		headers: map[string]string{},
+		cookies: map[string]string{},
+		reqUrl: reqUrl{
+			scheme: "http",
+			host:   "localhost",
+			port:   "3001",
+		},
 	}
 
-	p, err := strconv.Atoi(u.Port())
-
-	if err != nil {
-		fmt.Println("No assigned port")
-	}
-
-	R.port = p
+	return &r
 }
 
-func (r request) buildUrl() string {
-	var b strings.Builder
-
-	scheme := r.url.Scheme
-	host := r.url.Hostname()
-	port := r.url.Port()
-	uri := r.url.RequestURI()
-	userPath := r.path
-
-	b.WriteString(scheme)
-	b.WriteString("://")
-	b.WriteString(host)
-
-	if port != "" {
-		b.WriteString(":")
-		b.WriteString(port)
-	}
-
-	if userPath != "" {
-		b.WriteString(r.path)
-	} else {
-		b.WriteString(uri)
-	}
-
-	return b.String()
-}
-
-func (r *request) SetUrl(u *url.URL) {
-	R.url = u
-	R.port = 0
-}
-
-func (r *request) SetHeaderContentType(s string) {
-	r.contentType = s
-}
-
-func (r *request) SetMethod(s string) error {
-	if s == "GET" || s == "POST" || s == "DELETE" || s == "PUT" {
-		R.method = s
-		return nil
-	}
-
-	return errors.New("Invalid HTTP method")
-}
-
-func (r *request) SetPath(s string) {
-	if strings.HasPrefix(s, "/") == true {
-		r.path = s
-	} else {
-		b := strings.Builder{}
-		b.WriteString("/")
-		b.WriteString(s)
-		r.path = b.String()
-	}
-}
-
-func (r *request) SetPort(s string) error {
-	if p, err := strconv.Atoi(s); err != nil {
-		return errors.New("Can't convert port number to int")
-	} else if R.url.Port() == s {
-		return nil //user set port is same as url port
-	} else {
-		R.port = p
-		return nil
-	}
-}
-
-func (r *request) SetBodyData(s string) {
-	data := make(map[string]string)
-
-	s = strings.Trim(s, "\"")
-	a := strings.Split(s, "&")
-	for _, s := range a {
-		kv := strings.Split(s, "=")
-		data[kv[0]] = kv[1]
-	}
-
-	j, err := json.Marshal(data)
+func SendRequest(c *http.Client, r *Request) (*http.Response, error) {
+	httpReq := createHTTPRequestFromBase(r)
+	resp, err := c.Do(httpReq)
 
 	if err != nil {
-		log.Fatalln("Failed to marshal user data")
+		return nil, errors.New("HTTP request failed.")
 	}
 
-	R.body = j
+	return resp, err
 }
 
-func (r request) PerformRequest() (string, error) {
-	// fmt.Println("request", R.url.Scheme, R.url.Host, R.url.Port(), R.port, R.method, string(R.body))
-	fmt.Println(r.buildUrl())
-	return "", nil
-}
+func createHTTPRequestFromBase(r *Request) *http.Request {
+	fmt.Println(r.method, r.buildUrl(), bytes.NewBuffer(r.body), r.headers)
+	req, _ := http.NewRequest(r.method, r.buildUrl(), bytes.NewBuffer(r.body))
+	AddHeadersToRequest(req, r.headers)
+	AddCookiesToRequest(req, r.cookies)
 
-func (r *request) SetBodyJson(s string) {
-	j, err := json.Marshal(s)
-
-	if err != nil {
-		log.Fatalln("Failed to marshal user provided json")
-	}
-
-	R.body = j
+	return req
 }

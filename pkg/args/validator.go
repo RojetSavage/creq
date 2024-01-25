@@ -2,32 +2,29 @@ package args
 
 import (
 	"errors"
-	"fmt"
-	"log"
 )
 
 func ValidateUserFlags() []UserFlag {
 	for _, f := range Flags {
-		fmt.Println(f.F)
 		i, err := getProgramFlag(f.F)
 
 		if err != nil {
-			log.Fatal("Invalid flag given")
+			panic("Bad flag")
 		}
 
 		err = validateUserFlag(f, ProgramFlags[i])
 
 		if err != nil {
-			log.Fatal("Flag validation failed")
+			panic("User has not provided a required parameter")
 		}
 	}
 
 	return Flags
 }
 
-func validateUserFlag(uFlag UserFlag, flag Flag) error {
-	if flag.ParamRequired && uFlag.Parameter == "" {
-		return errors.New("User has not provided a parameter for a flag")
+func validateUserFlag(uFlag UserFlag, f flag) error {
+	if f.ParamRequired && uFlag.Parameter == "" {
+		return errors.New("User has not provided a required parameter")
 	}
 	return nil
 }
