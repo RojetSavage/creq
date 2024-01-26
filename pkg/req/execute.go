@@ -1,17 +1,19 @@
-package args
+package req
 
 import (
+	"args"
 	"net/http"
-	"req"
 )
 
-func ApplyFlagsToClientAndRequest(c *http.Client, r *req.Request, flags []UserFlag) (*http.Client, *req.Request) {
+func ApplyFlagsToClientAndRequest(flags []args.UserFlag) (*http.Client, *Request) {
+	c, r := NewClient(), NewRequestWrapper()
+
 	for _, f := range flags {
 		switch f.F {
 
 		//client
 		case "connect-timeout":
-			req.SetClientTimeout(c, f.Parameter)
+			SetClientTimeout(c, f.Parameter)
 
 		//url
 		case "s", "scheme":
@@ -53,7 +55,10 @@ func ApplyFlagsToClientAndRequest(c *http.Client, r *req.Request, flags []UserFl
 			r.SetHttpMethod(http.MethodPatch)
 		case "trace":
 			r.SetHttpMethod(http.MethodTrace)
+		default:
+			panic("Black Flag")
 		}
+
 	}
 
 	return c, r

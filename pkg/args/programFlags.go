@@ -61,7 +61,7 @@ func setProgramFlags() {
 			Short:         "C",
 			ParamRequired: true,
 			DefaultValue:  "",
-			Description:   "Sets cookies",
+			Description:   "Sets cookie",
 		},
 		//methods
 		{

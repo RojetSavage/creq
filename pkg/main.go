@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"gcurl/pkg/repl"
 	"io"
 	"log"
 	"os"
@@ -25,7 +25,7 @@ func main() {
 	if !runRepl {
 		args.ParseArgs(os.Args)
 		flags := args.ValidateUserFlags()
-		c, r := args.ApplyFlagsToClientAndRequest(req.NewClient(), req.NewRequestWrapper(), flags)
+		c, r := req.ApplyFlagsToClientAndRequest(flags)
 
 		res, err := req.SendRequest(c, r)
 		defer res.Body.Close()
@@ -36,6 +36,6 @@ func main() {
 
 		io.Copy(os.Stdout, res.Body)
 	} else {
-		fmt.Println("Run REPL")
+		repl.RunRepl()
 	}
 }
