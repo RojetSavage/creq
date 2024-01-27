@@ -1,26 +1,71 @@
 package repl
 
 import (
+	"args"
 	"bufio"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
 	"os"
+	"req"
 	"strings"
 )
 
 func RunRepl() {
-	var input string
-	fmt.Printf(">>>: ")
+	fmt.Printf(">>> ")
+	input := []string{","}
 
-	for input != "exit" {
-		input, _ = bufio.NewReader(os.Stdin).ReadString('\n')
+	c := req.NewClient()
+	r := req.NewRequest()
 
-		input = strings.Trim(input, "\n")
-		input = strings.Trim(input, " ")
-		// fmt.Printf("Results you Provided: \n%v\n", len(input))
-		// fmt.Printf("Results you Provided: \n%v\n", s)
-		// fmt.Println(s != "exit")
-		fmt.Printf(">>>: ")
+	for input[0] != "exit" {
+		printCurrentRequestInfo(r)
+
+		cmdLineArgs := strings.Split(getUserInput(), " ")
+		flags := args.ParseArgs(cmdLineArgs)
+		args.ValidateUserFlags(flags, true)
+
+		req.ApplyFlagsToClient(c, flags)
+		req.ApplyFlagsToRequest(r, flags)
+
+		if send := isSendable(flags); send {
+			res, err := req.SendRequest(c, r)
+			defer res.Body.Close()
+
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			prettyPrint(res.Body)
+		}
+
 	}
 
 	os.Exit(0)
+}
+
+func printCurrentRequestInfo(r *http.Request) {
+	fmt.Printf("Current Request: %v -> %v, Body: %v\n", r.Method, r.URL.String(), r.Body)
+}
+
+func getUserInput() string {
+	input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	input = strings.Trim(input, "\n")
+	input = strings.Trim(input, " ")
+	return input
+}
+
+func isSendable(flags []args.UserFlag) bool {
+	if len(flags) == 0 {
+		return true
+	}
+
+	//if check for 'send' flag
+
+	return false
+}
+
+func prettyPrint(body io.ReadCloser) {
+	io.Copy(os.Stdout, body)
 }

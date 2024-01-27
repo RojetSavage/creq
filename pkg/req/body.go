@@ -1,13 +1,11 @@
 package req
 
 import (
-	"encoding/json"
+	"bytes"
+	"io"
+	"net/http"
 	"strings"
 )
-
-func (r *Request) SetUrlQueryString(s string) {
-	r.query = s
-}
 
 func parseUrlQueryParams(s string) map[string]string {
 	data := make(map[string]string)
@@ -34,11 +32,7 @@ func mergeMaps(m ...map[string]string) map[string]string {
 	return data
 }
 
-func (r *Request) SetBodyJson(s string) {
-	b := json.Valid([]byte(s))
-
-	if b == true {
-		j := []byte(s)
-		r.body = j
-	}
+func ChangeRequestBody(r *http.Request, s string) {
+	buf := []byte(s)
+	r.Body = io.NopCloser(bytes.NewBuffer(buf))
 }

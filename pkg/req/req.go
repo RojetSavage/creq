@@ -1,10 +1,9 @@
 package req
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
 	"net/http"
+	"net/url"
 )
 
 type Request struct {
@@ -13,51 +12,20 @@ type Request struct {
 	method   string
 	body     []byte
 	encoding string
-
-	reqUrl
+	url      *url.URL
 }
 
-type reqUrl struct {
-	scheme   string
-	user     string
-	host     string
-	port     string
-	path     string
-	query    string
-	fragment string
+func NewRequest() *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:3001", nil)
+	return req
 }
 
-func NewRequestWrapper() *Request {
-	r := Request{
-		method:  "GET",
-		headers: map[string]string{},
-		cookies: map[string]string{},
-		reqUrl: reqUrl{
-			scheme: "http",
-			host:   "localhost",
-			port:   "3001",
-		},
-	}
-
-	return &r
-}
-
-func SendRequest(c *http.Client, r *Request) (*http.Response, error) {
-	httpReq := createHTTPRequestFromBase(r)
-	resp, err := c.Do(httpReq)
+func SendRequest(c *http.Client, r *http.Request) (*http.Response, error) {
+	resp, err := c.Do(r)
 
 	if err != nil {
 		return nil, errors.New("HTTP request failed.")
 	}
 
 	return resp, err
-}
-
-func createHTTPRequestFromBase(r *Request) *http.Request {
-	fmt.Println(r.method, r.buildUrl(), bytes.NewBuffer(r.body), r.headers)
-	req, _ := http.NewRequest(r.method, r.buildUrl(), bytes.NewBuffer(r.body))
-	AddHeadersToRequest(req, r.headers)
-	AddCookiesToRequest(req, r.cookies)
-
-	return req
 }

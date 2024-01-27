@@ -18,16 +18,18 @@ type flag struct {
 	ParamRequired bool
 	DefaultValue  any
 	Description   string
+	ReplOnly      bool
 }
 
-var Flags []UserFlag
 var ProgramFlags []flag
 
 func init() {
 	setProgramFlags()
 }
 
-func ParseArgs(cmdLineArgs []string) {
+func ParseArgs(cmdLineArgs []string) []UserFlag {
+	var Flags []UserFlag
+
 	for i := 1; i < len(cmdLineArgs); i++ {
 		var f UserFlag
 		flagExist, parsedFlag := isFlag(cmdLineArgs[i])
@@ -36,6 +38,7 @@ func ParseArgs(cmdLineArgs []string) {
 		//check for optional first URL
 		if !flagExist && !shortExist && i == 1 {
 			_, err := url.ParseRequestURI(cmdLineArgs[i])
+
 			if err != nil {
 				log.Fatalln("Given URL is invalid. Example: http://github.com")
 			}
@@ -55,6 +58,8 @@ func ParseArgs(cmdLineArgs []string) {
 			Flags[len(Flags)-1].Parameter = strings.Trim(cmdLineArgs[i], " ")
 		}
 	}
+
+	return Flags
 }
 
 func isFlag(s string) (bool, string) {

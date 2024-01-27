@@ -1,0 +1,18 @@
+example command line
+GET http://localhost:8080 headers {content-type: application/json} body: {"asdf":"asdf"}
+>>>: 
+
+
+enter flags as normal
+enter resends previous request 
+any flags added will alter the previous request
+
+
+
+repl flags: 
+c - returns request to default
+
+-d <flag> removes the flag from the previous req.
+
+
+

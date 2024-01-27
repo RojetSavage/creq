@@ -5,13 +5,12 @@ import (
 	"io"
 	"log"
 	"os"
+	"req"
 
 	"args"
-	"req"
 )
 
 var (
-	flags   []args.UserFlag
 	runRepl bool
 )
 
@@ -22,13 +21,18 @@ func init() {
 }
 
 func main() {
-	if !runRepl {
-		args.ParseArgs(os.Args)
-		flags := args.ValidateUserFlags()
-		c, r := req.ApplyFlagsToClientAndRequest(flags)
+	if len(os.Args) > 1 {
+		flags := args.ParseArgs(os.Args)
+		args.ValidateUserFlags(flags, false)
+
+		r := req.NewRequest()
+		c := req.NewClient()
+
+		req.ApplyFlagsToClient(c, flags)
+		req.ApplyFlagsToRequest(r, flags)
 
 		res, err := req.SendRequest(c, r)
-		defer res.Body.Close()
+		// defer res.Body.Close()
 
 		if err != nil {
 			log.Fatalln(err)

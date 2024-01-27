@@ -2,68 +2,117 @@ package req
 
 import (
 	"errors"
+	"fmt"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 )
 
-func (r *Request) SetUrl(s string) {
-	url, _ := url.ParseRequestURI(s)
-	r.setReqUrl(url)
+type dismantledUrl struct {
+	scheme   string
+	user     string
+	host     string
+	port     string
+	path     string
+	query    string
+	fragment string
 }
 
-func (r *Request) setReqUrl(u *url.URL) {
-	r.scheme = u.Scheme
-	r.host = u.Hostname()
-	r.port = u.Port()
-	r.path = u.RequestURI()
-	r.query = u.Query().Encode()
-	r.fragment = u.Fragment
+func SetUrl(r *http.Request, s string) error {
+	url, err := url.Parse(s)
+
+	if err != nil {
+		return errors.New("Bad URL formed")
+	}
+
+	r.URL = url
+	return nil
 }
 
-func (r Request) buildUrl() string {
-	var b strings.Builder
+func explodeUrl(u *url.URL) *dismantledUrl {
+	d := dismantledUrl{}
 
-	b.WriteString(r.scheme)
+	d.scheme = u.Scheme
+	d.host = u.Hostname()
+	d.port = u.Port()
+	d.path = u.Path
+	d.query = u.RawQuery
+	d.fragment = u.Fragment
+	return &d
+}
+
+func reassembleUrl(u *dismantledUrl) string {
+	var b = strings.Builder{}
+
+	b.WriteString(u.scheme)
 	b.WriteString("://")
-	b.WriteString(r.host)
 
-	if r.port != "" {
+	if u.user != "" {
+		b.WriteString(u.user)
+		b.WriteString("@")
+	}
+
+	b.WriteString(u.host)
+
+	if u.port != "" {
 		b.WriteString(":")
-		b.WriteString(r.port)
+		b.WriteString(u.port)
 	}
 
-	if r.path != "" {
-		b.WriteString(r.path)
+	if u.path != "" {
+		b.WriteString(u.path)
 	}
 
-	if r.query != "" {
+	if u.query != "" {
 		b.WriteString("?")
-		b.WriteString(r.query)
+		b.WriteString(u.query)
+	}
+
+	if u.fragment != "" {
+		b.WriteString("#")
+		b.WriteString(u.fragment)
 	}
 
 	return b.String()
 }
 
-func (r *Request) SetScheme(s string) {
-	r.scheme = s
-}
-
-func (r *Request) SetPort(s string) error {
-	if _, err := strconv.Atoi(s); err != nil {
-		return errors.New("Can't convert port number to int")
+func ChangeUri(r *http.Request, portion string, s string) error {
+	u := explodeUrl(r.URL)
+	fmt.Println(u)
+	switch portion {
+	case "scheme":
+		u.scheme = s
+	case "host":
+		u.host = s
+	case "port":
+		u.port = validatePort(s)
+	case "path":
+		u.path = validatePath(s)
+	case "query":
+		u.query = s
+	case "fragment":
+		u.fragment = s
 	}
-	r.port = s
-	return nil
+
+	err := SetUrl(r, reassembleUrl(u))
+	return err
 }
 
-func (r *Request) SetPath(s string) {
+func validatePort(s string) string {
+	if _, err := strconv.Atoi(s); err != nil {
+		panic("Can't convert port number to int")
+	}
+	return s
+}
+
+func validatePath(s string) string {
 	if strings.HasPrefix(s, "/") == true {
-		r.path = s
+		return s
 	} else {
 		b := strings.Builder{}
 		b.WriteString("/")
 		b.WriteString(s)
-		r.path = b.String()
+		return b.String()
 	}
 }

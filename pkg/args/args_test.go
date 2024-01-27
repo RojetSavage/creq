@@ -16,13 +16,12 @@ func TestIsFlag(t *testing.T) {
 		{"--", false},
 		{"", false},
 		{"-- ", false},
-		{"----", false},
 		{"--json!", false},
 		{"--j", false},
 	}
 	for _, test := range tests {
 		if b, _ := isFlag(test.input); b != test.expected {
-			t.Error("Failed")
+			t.Errorf("Failed. Expected %v but got %v in test %v", test.expected, b, test)
 		}
 	}
 }

@@ -4,27 +4,30 @@ import (
 	"errors"
 )
 
-func ValidateUserFlags() []UserFlag {
-	for _, f := range Flags {
+func ValidateUserFlags(flags []UserFlag, inRepl bool) bool {
+	for _, f := range flags {
 		i, err := getProgramFlag(f.F)
 
 		if err != nil {
 			panic("Bad flag")
 		}
 
-		err = validateUserFlag(f, ProgramFlags[i])
+		err = validateUserFlag(f, ProgramFlags[i], inRepl)
 
 		if err != nil {
 			panic("User has not provided a required parameter")
 		}
 	}
-
-	return Flags
+	return true
 }
 
-func validateUserFlag(uFlag UserFlag, f flag) error {
+func validateUserFlag(uFlag UserFlag, f flag, inRepl bool) error {
 	if f.ParamRequired && uFlag.Parameter == "" {
 		return errors.New("User has not provided a required parameter")
+	}
+
+	if !inRepl && f.ReplOnly {
+		return errors.New("Using REPL command in cmd line mode.")
 	}
 	return nil
 }

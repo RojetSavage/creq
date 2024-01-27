@@ -9,6 +9,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "",
 			Description:   "Add JSON to the req body",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "data",
@@ -16,6 +17,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "",
 			Description:   "Add key value pairs which are marshalled into JSON and added to the req body",
+			ReplOnly:      false,
 		},
 
 		//url
@@ -25,6 +27,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "http://localhost.com:8080",
 			Description:   "Sets the URL",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "port",
@@ -32,6 +35,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "8080",
 			Description:   "Sets the req port value",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "path",
@@ -39,6 +43,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "",
 			Description:   "Appends path to req URL. Default URL is localhost.com. If URL is given as first cmd line arg, path is appended.",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "scheme",
@@ -46,6 +51,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "http",
 			Description:   "Sets the req protocol",
+			ReplOnly:      false,
 		},
 
 		//headers
@@ -55,6 +61,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "application/json",
 			Description:   "Sets the header 'content-type'",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "cookie",
@@ -62,6 +69,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "",
 			Description:   "Sets cookie",
+			ReplOnly:      false,
 		},
 		//methods
 		{
@@ -70,6 +78,7 @@ func setProgramFlags() {
 			ParamRequired: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "put",
@@ -77,6 +86,7 @@ func setProgramFlags() {
 			ParamRequired: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "post",
@@ -84,6 +94,7 @@ func setProgramFlags() {
 			ParamRequired: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "delete",
@@ -91,6 +102,7 @@ func setProgramFlags() {
 			ParamRequired: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "head",
@@ -98,6 +110,7 @@ func setProgramFlags() {
 			ParamRequired: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "patch",
@@ -105,6 +118,7 @@ func setProgramFlags() {
 			ParamRequired: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "trace",
@@ -112,6 +126,7 @@ func setProgramFlags() {
 			ParamRequired: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
+			ReplOnly:      false,
 		},
 		{
 			Flag:          "connect-timeout",
@@ -119,6 +134,7 @@ func setProgramFlags() {
 			ParamRequired: true,
 			DefaultValue:  "",
 			Description:   "Sets a limit in seconds for a connection request",
+			ReplOnly:      false,
 		},
 	}
 

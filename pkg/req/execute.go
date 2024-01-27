@@ -5,61 +5,65 @@ import (
 	"net/http"
 )
 
-func ApplyFlagsToClientAndRequest(flags []args.UserFlag) (*http.Client, *Request) {
-	c, r := NewClient(), NewRequestWrapper()
-
+func ApplyFlagsToRequest(r *http.Request, flags []args.UserFlag) error {
 	for _, f := range flags {
-		switch f.F {
+		applyFlagToRequest(r, f)
+	}
+	return nil
+}
 
-		//client
-		case "connect-timeout":
-			SetClientTimeout(c, f.Parameter)
+func applyFlagToRequest(r *http.Request, f args.UserFlag) error {
+	var err error
 
-		//url
-		case "s", "scheme":
-			r.SetScheme(f.Parameter)
-		case "P", "port":
-			r.SetPort(f.Parameter)
-		case "p", "path":
-			r.SetPath(f.Parameter)
-		case "url":
-			r.SetUrl(f.Parameter)
-		case "d", "data":
-			r.AddHeader("Content-Type", "x-www-form-urlencoded")
-			r.SetUrlQueryString(f.Parameter)
+	switch f.F {
+	case "s", "scheme":
+		err = ChangeUri(r, "scheme", f.Parameter)
+	case "host":
+		err = ChangeUri(r, "host", f.Parameter)
+	case "P", "port":
+		err = ChangeUri(r, "port", f.Parameter)
+	case "p", "path":
+		err = ChangeUri(r, "path", f.Parameter)
+	case "q", "query":
+		err = ChangeUri(r, "query", f.Parameter)
+	case "fragment":
+		err = ChangeUri(r, "fragment", f.Parameter)
+	case "url":
+		err = SetUrl(r, f.Parameter)
 
-		//body
-		case "j", "json":
-			r.AddHeader("Content-Type", "application/json")
-			r.SetHttpMethod(http.MethodPost)
-			r.SetBodyJson(f.Parameter)
+	case "d", "data":
+		AddHeader(r, "Content-Type", "x-www-form-urlencoded")
+		err = ChangeUri(r, "query", f.Parameter)
+	case "j", "json":
+		AddHeader(r, "Content-Type", "application/json")
+		SetHttpMethod(r, http.MethodPost)
+		ChangeRequestBody(r, f.Parameter)
 
-		//headers
-		case "c", "contentType":
-			r.AddHeader("Content-Type", f.Parameter)
-		case "C", "cookie":
-			r.AddCookie(f.Parameter)
+	case "c", "contentType":
+		AddHeader(r, "Content-Type", f.Parameter)
+	case "C", "cookie":
+		AddCookie(r, f.Parameter)
 
-		//methods
-		case "get":
-			r.SetHttpMethod(http.MethodGet)
-		case "post":
-			r.SetHttpMethod(http.MethodPost)
-		case "delete":
-			r.SetHttpMethod(http.MethodDelete)
-		case "put":
-			r.SetHttpMethod(http.MethodPut)
-		case "head":
-			r.SetHttpMethod(http.MethodHead)
-		case "patch":
-			r.SetHttpMethod(http.MethodPatch)
-		case "trace":
-			r.SetHttpMethod(http.MethodTrace)
-		default:
-			panic("Black Flag")
-		}
+	case "get":
+		SetHttpMethod(r, http.MethodGet)
+	case "post":
+		SetHttpMethod(r, http.MethodPost)
+	case "delete":
+		SetHttpMethod(r, http.MethodDelete)
+	case "put":
+		SetHttpMethod(r, http.MethodPut)
+	case "head":
+		SetHttpMethod(r, http.MethodHead)
+	case "patch":
+		SetHttpMethod(r, http.MethodPatch)
+	case "trace":
+		SetHttpMethod(r, http.MethodTrace)
 
 	}
 
-	return c, r
+	if err != nil {
+		panic(err)
+	}
+
+	return nil
 }

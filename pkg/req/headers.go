@@ -5,41 +5,27 @@ import (
 	"strings"
 )
 
-func (r *Request) SetHttpMethod(s string) {
+func SetHttpMethod(r *http.Request, s string) {
 	if s == "GET" || s == "POST" || s == "DELETE" || s == "PUT" || s == "HEAD" || s == "PATCH" || s == "TRACE" {
-		r.method = s
-	} else {
-		panic("Invalid HTTP method. This shouldn't happen.")
+		r.Method = s
 	}
 }
 
-func (r *Request) AddHeader(k string, v string) {
-	r.headers[k] = v
+func AddHeader(r *http.Request, k string, v string) {
+	r.Header.Set(k, v)
 }
 
-func AddHeadersToRequest(req *http.Request, headers map[string]string) {
-	for k, v := range headers {
-		req.Header.Set(k, v)
-	}
-}
-
-func (r *Request) AddCookie(s string) {
+func AddCookie(r *http.Request, s string) {
 	a := strings.Split(s, "&")
 
 	for _, s := range a {
 		kv := strings.Split(s, "=")
-		r.cookies[kv[0]] = kv[1]
-	}
-}
-
-func AddCookiesToRequest(req *http.Request, cookies map[string]string) {
-	for k, v := range cookies {
-		c := &http.Cookie{
-			Name:     k,
-			Value:    v,
+		c := http.Cookie{
+			Name:     kv[0],
+			Value:    kv[1],
 			HttpOnly: false,
-			Path:     req.URL.Path,
+			Path:     r.URL.Path,
 		}
-		req.AddCookie(c)
+		r.AddCookie(&c)
 	}
 }
