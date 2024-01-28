@@ -3,25 +3,21 @@ package req
 import (
 	"errors"
 	"net/http"
-	"net/url"
 )
 
 type Request struct {
-	headers  map[string]string
-	cookies  map[string]string
-	method   string
-	body     []byte
-	encoding string
-	url      *url.URL
+	http.Request
 }
 
-func NewRequest() *http.Request {
+func NewRequest() *Request {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:3001", nil)
-	return req
+	r := Request{*req}
+	return &r
 }
 
-func SendRequest(c *http.Client, r *http.Request) (*http.Response, error) {
-	resp, err := c.Do(r)
+func SendRequest(c *http.Client, r *Request) (*http.Response, error) {
+	clone := r.Clone(r.Context())
+	resp, err := c.Do(clone)
 
 	if err != nil {
 		return nil, errors.New("HTTP request failed.")

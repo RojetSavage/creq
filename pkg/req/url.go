@@ -2,8 +2,6 @@ package req
 
 import (
 	"errors"
-	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -19,7 +17,7 @@ type dismantledUrl struct {
 	fragment string
 }
 
-func SetUrl(r *http.Request, s string) error {
+func (r *Request) SetUrl(s string) error {
 	url, err := url.Parse(s)
 
 	if err != nil {
@@ -77,10 +75,10 @@ func reassembleUrl(u *dismantledUrl) string {
 	return b.String()
 }
 
-func ChangeUri(r *http.Request, portion string, s string) error {
+func (r *Request) ChangeUri(urlComponent string, s string) error {
 	u := explodeUrl(r.URL)
-	fmt.Println(u)
-	switch portion {
+
+	switch urlComponent {
 	case "scheme":
 		u.scheme = s
 	case "host":
@@ -95,13 +93,13 @@ func ChangeUri(r *http.Request, portion string, s string) error {
 		u.fragment = s
 	}
 
-	err := SetUrl(r, reassembleUrl(u))
+	err := r.SetUrl(reassembleUrl(u))
 	return err
 }
 
 func validatePort(s string) string {
 	if _, err := strconv.Atoi(s); err != nil {
-		panic("Can't convert port number to int")
+		return ""
 	}
 	return s
 }

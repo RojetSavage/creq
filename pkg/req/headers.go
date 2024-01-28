@@ -5,17 +5,21 @@ import (
 	"strings"
 )
 
-func SetHttpMethod(r *http.Request, s string) {
-	if s == "GET" || s == "POST" || s == "DELETE" || s == "PUT" || s == "HEAD" || s == "PATCH" || s == "TRACE" {
+func (r *Request) SetHttpMethod(s string) {
+	if s == http.MethodGet || s == http.MethodPost || s == http.MethodDelete || s == http.MethodPut || s == http.MethodHead || s == http.MethodPatch || s == http.MethodTrace {
 		r.Method = s
 	}
 }
 
-func AddHeader(r *http.Request, k string, v string) {
-	r.Header.Set(k, v)
+func (r *Request) AddHeader(s string) {
+	a := strings.Split(s, "&")
+	for _, header := range a {
+		h := strings.Split(header, "=")
+		r.Header.Set(h[0], h[1])
+	}
 }
 
-func AddCookie(r *http.Request, s string) {
+func (r *Request) AddCookieToReq(s string) {
 	a := strings.Split(s, "&")
 
 	for _, s := range a {

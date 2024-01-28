@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"os"
 	"req"
 	"strings"
@@ -45,7 +44,7 @@ func RunRepl() {
 	os.Exit(0)
 }
 
-func printCurrentRequestInfo(r *http.Request) {
+func printCurrentRequestInfo(r *req.Request) {
 	fmt.Printf("Current Request: %v -> %v, Body: %v\n", r.Method, r.URL.String(), r.Body)
 }
 

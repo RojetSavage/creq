@@ -3,7 +3,6 @@ package req
 import (
 	"bytes"
 	"io"
-	"net/http"
 	"strings"
 )
 
@@ -32,7 +31,7 @@ func mergeMaps(m ...map[string]string) map[string]string {
 	return data
 }
 
-func ChangeRequestBody(r *http.Request, s string) {
+func (r *Request) ChangeRequestBody(s string) {
 	buf := []byte(s)
 	r.Body = io.NopCloser(bytes.NewBuffer(buf))
 }
