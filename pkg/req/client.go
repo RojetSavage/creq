@@ -24,15 +24,21 @@ func SetClientTimeout(c *http.Client, seconds string) {
 	c.Timeout = time.Second * time.Duration(i)
 }
 
-func ApplyFlagsToClient(c *http.Client, flags []args.UserFlag) {
+func ApplyFlagsToClient(c *http.Client, flags []args.UserFlag) error {
+	var err error
+
 	for _, flag := range flags {
-		applyFlagToClient(c, flag)
+		err = applyFlagToClient(c, flag)
 	}
+
+	return err
 }
 
-func applyFlagToClient(c *http.Client, f args.UserFlag) {
+func applyFlagToClient(c *http.Client, f args.UserFlag) error {
 	switch f.F {
 	case "connect-timeout":
 		SetClientTimeout(c, f.Parameter)
 	}
+
+	return nil
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gcurl/pkg/repl"
 	"io"
 	"log"
@@ -22,23 +23,26 @@ func init() {
 
 func main() {
 	if len(os.Args) > 1 {
-		flags := args.ParseArgs(os.Args)
-		args.ValidateUserFlags(flags, false)
+		_, flags := args.ParseArgs(os.Args, false)
+		err, ok := args.ValidateUserFlags(flags, false)
 
-		r := req.NewRequest()
-		c := req.NewClient()
+		if !ok {
+			fmt.Println(err)
+		} else {
+			r := req.NewRequest()
+			c := req.NewClient()
 
-		req.ApplyFlagsToClient(c, flags)
-		req.ApplyFlagsToRequest(r, flags)
+			req.ApplyFlagsToClient(c, flags)
+			req.ApplyFlagsToRequest(r, flags)
 
-		res, err := req.SendRequest(c, r)
-		// defer res.Body.Close()
+			res, err := req.SendRequest(c, r)
 
-		if err != nil {
-			log.Fatalln(err)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			io.Copy(os.Stdout, res.Body)
 		}
-
-		io.Copy(os.Stdout, res.Body)
 	} else {
 		repl.RunRepl()
 	}

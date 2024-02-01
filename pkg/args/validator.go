@@ -2,41 +2,47 @@ package args
 
 import (
 	"errors"
+	"fmt"
 )
 
-func ValidateUserFlags(flags []UserFlag, inRepl bool) bool {
-	for _, f := range flags {
-		i, err := getProgramFlag(f.F)
+func ValidateUserFlags(flags []UserFlag, inRepl bool) (error, bool) {
+	if len(flags) == 0 && inRepl {
+		return nil, true
+	}
 
-		if err != nil {
-			panic("Bad flag")
+	for i, f := range flags {
+		ok := getProgramFlag(f.F)
+
+		if !ok {
+			return errors.New(fmt.Sprintf("Unrecognised flag: %v", f.F)), false
 		}
 
-		err = validateUserFlag(f, ProgramFlags[i], inRepl)
+		err := validateUserFlag(f, ProgramFlags[i], inRepl)
 
 		if err != nil {
-			panic("User has not provided a required parameter")
+			return errors.New(fmt.Sprintf("Parameter not provided for flag: %v", f.F)), false
 		}
 	}
-	return true
+	return nil, true
 }
 
 func validateUserFlag(uFlag UserFlag, f flag, inRepl bool) error {
 	if f.ParamRequired && uFlag.Parameter == "" {
-		return errors.New("User has not provided a required parameter")
+		return errors.New(fmt.Sprintf("Parameter not provided for flag: %v", uFlag.F))
 	}
 
 	if !inRepl && f.ReplOnly {
-		return errors.New("Using REPL command in cmd line mode.")
+		return errors.New(fmt.Sprintf("Flag '%v' only valid in REPL", uFlag.F))
 	}
+
 	return nil
 }
 
-func getProgramFlag(s string) (int, error) {
+func getProgramFlag(s string) bool {
 	for i := 0; i < len(ProgramFlags); i++ {
 		if ProgramFlags[i].Flag == s || ProgramFlags[i].Short == s {
-			return i, nil
+			return true
 		}
 	}
-	return -1, errors.New("Invalid Flag Given")
+	return false
 }

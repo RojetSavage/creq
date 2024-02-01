@@ -62,7 +62,7 @@ func applyFlagToRequest(r *Request, f args.UserFlag) error {
 	}
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	return nil

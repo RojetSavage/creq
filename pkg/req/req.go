@@ -1,7 +1,6 @@
 package req
 
 import (
-	"errors"
 	"net/http"
 )
 
@@ -20,8 +19,8 @@ func SendRequest(c *http.Client, r *Request) (*http.Response, error) {
 	resp, err := c.Do(clone)
 
 	if err != nil {
-		return nil, errors.New("HTTP request failed.")
+		return nil, err
 	}
 
-	return resp, err
+	return resp, nil
 }
