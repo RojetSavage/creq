@@ -2,6 +2,25 @@ package args
 
 func setProgramFlags() {
 	var f = []flag{
+		//repl flags
+
+		{
+			Flag:          "send",
+			Short:         "s",
+			ParamRequired: false,
+			DefaultValue:  "",
+			Description:   "sends request",
+			ReplOnly:      true,
+		},
+		{
+			Flag:          "reset",
+			Short:         "x",
+			ParamRequired: false,
+			DefaultValue:  "",
+			Description:   "returns state of http request to default",
+			ReplOnly:      true,
+		},
+
 		//body
 		{
 			Flag:          "json",
