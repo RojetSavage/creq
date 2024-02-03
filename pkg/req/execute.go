@@ -17,6 +17,8 @@ func applyFlagToRequest(r *Request, f args.UserFlag) error {
 	var err error
 
 	switch f.F {
+	case "x", "reset":
+		r.ResetRequest()
 	case "s", "scheme":
 		err = r.ChangeUri("scheme", f.Parameter)
 	case "host":
@@ -31,20 +33,6 @@ func applyFlagToRequest(r *Request, f args.UserFlag) error {
 		err = r.ChangeUri("fragment", f.Parameter)
 	case "url":
 		err = r.SetUrl(f.Parameter)
-
-	case "d", "data":
-		r.AddHeader(strings.Join([]string{"Content-Type", "x-www-form-urlencoded"}, "="))
-		err = r.ChangeUri("query", f.Parameter)
-	case "j", "json":
-		r.AddHeader(strings.Join([]string{"Content-Type", "application/json"}, "="))
-		r.SetHttpMethod(http.MethodPost)
-		r.ChangeRequestBody(f.Parameter)
-
-	case "c", "contentType":
-		r.AddHeader(strings.Join([]string{"Content-Type", f.Parameter}, "="))
-	case "C", "cookie":
-		r.AddCookieToReq(f.Parameter)
-
 	case "get":
 		r.SetHttpMethod(http.MethodGet)
 	case "post":
@@ -59,6 +47,18 @@ func applyFlagToRequest(r *Request, f args.UserFlag) error {
 		r.SetHttpMethod(http.MethodPatch)
 	case "trace":
 		r.SetHttpMethod(http.MethodTrace)
+
+	case "d", "data":
+		err = r.ChangeUri("query", f.Parameter)
+	case "j", "json":
+		r.AddHeader(strings.Join([]string{"Content-Type", "application/json"}, "="))
+		r.SetHttpMethod(http.MethodPost)
+		r.ChangeRequestBody(f.Parameter)
+
+	case "c", "contentType":
+		r.AddHeader(strings.Join([]string{"Content-Type", f.Parameter}, "="))
+	case "C", "cookie":
+		r.AddCookieToReq(f.Parameter)
 	}
 
 	if err != nil {
