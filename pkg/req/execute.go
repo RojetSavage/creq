@@ -18,47 +18,47 @@ func applyFlagToRequest(r *Request, f args.UserFlag) error {
 
 	switch f.F {
 	case "x", "reset":
-		r.ResetRequest()
+		r.resetRequest()
 	case "s", "scheme":
-		err = r.ChangeUri("scheme", f.Parameter)
+		err = r.changeUri("scheme", f.Parameter)
 	case "host":
-		err = r.ChangeUri("host", f.Parameter)
+		err = r.changeUri("host", f.Parameter)
 	case "P", "port":
-		err = r.ChangeUri("port", f.Parameter)
+		err = r.changeUri("port", f.Parameter)
 	case "p", "path":
-		err = r.ChangeUri("path", f.Parameter)
+		err = r.changeUri("path", f.Parameter)
 	case "q", "query":
-		err = r.ChangeUri("query", f.Parameter)
+		err = r.changeUri("query", f.Parameter)
 	case "fragment":
-		err = r.ChangeUri("fragment", f.Parameter)
+		err = r.changeUri("fragment", f.Parameter)
 	case "url":
-		err = r.SetUrl(f.Parameter)
+		err = r.setUrl(f.Parameter)
 	case "get":
-		r.SetHttpMethod(http.MethodGet)
+		r.setHttpMethod(http.MethodGet)
 	case "post":
-		r.SetHttpMethod(http.MethodPost)
+		r.setHttpMethod(http.MethodPost)
 	case "delete":
-		r.SetHttpMethod(http.MethodDelete)
+		r.setHttpMethod(http.MethodDelete)
 	case "put":
-		r.SetHttpMethod(http.MethodPut)
+		r.setHttpMethod(http.MethodPut)
 	case "head":
-		r.SetHttpMethod(http.MethodHead)
+		r.setHttpMethod(http.MethodHead)
 	case "patch":
-		r.SetHttpMethod(http.MethodPatch)
+		r.setHttpMethod(http.MethodPatch)
 	case "trace":
-		r.SetHttpMethod(http.MethodTrace)
+		r.setHttpMethod(http.MethodTrace)
 
 	case "d", "data":
-		err = r.ChangeUri("query", f.Parameter)
+		err = r.changeUri("query", f.Parameter)
 	case "j", "json":
-		r.AddHeader(strings.Join([]string{"Content-Type", "application/json"}, "="))
-		r.SetHttpMethod(http.MethodPost)
-		r.ChangeRequestBody(f.Parameter)
+		r.addHeader(strings.Join([]string{"Content-Type", "application/json"}, "="))
+		r.setHttpMethod(http.MethodPost)
+		r.changeRequestBody(f.Parameter)
 
 	case "c", "contentType":
-		r.AddHeader(strings.Join([]string{"Content-Type", f.Parameter}, "="))
+		r.addHeader(strings.Join([]string{"Content-Type", f.Parameter}, "="))
 	case "C", "cookie":
-		r.AddCookieToReq(f.Parameter)
+		r.addCookieToReq(f.Parameter)
 	}
 
 	if err != nil {

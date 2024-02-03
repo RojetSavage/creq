@@ -73,6 +73,8 @@ func cloneReq(r *Request) *http.Request {
 	return clone
 }
 
-func (r *Request) ResetRequest() {
-	r = NewRequest()
+func (r *Request) resetRequest() {
+	n := NewRequest()
+	r = n
+	r.Method = http.MethodTrace
 }

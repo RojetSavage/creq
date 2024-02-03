@@ -17,7 +17,7 @@ type dismantledUrl struct {
 	fragment string
 }
 
-func (r *Request) SetUrl(s string) error {
+func (r *Request) setUrl(s string) error {
 	url, err := url.Parse(s)
 
 	if err != nil {
@@ -75,7 +75,7 @@ func reassembleUrl(u *dismantledUrl) string {
 	return b.String()
 }
 
-func (r *Request) ChangeUri(urlComponent string, s string) error {
+func (r *Request) changeUri(urlComponent string, s string) error {
 	u := explodeUrl(r.URL)
 
 	switch urlComponent {
@@ -93,7 +93,7 @@ func (r *Request) ChangeUri(urlComponent string, s string) error {
 		u.fragment = s
 	}
 
-	err := r.SetUrl(reassembleUrl(u))
+	err := r.setUrl(reassembleUrl(u))
 	return err
 }
 

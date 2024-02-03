@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-func (r *Request) SetHttpMethod(s string) {
+func (r *Request) setHttpMethod(s string) {
 	if s == http.MethodGet || s == http.MethodPost || s == http.MethodDelete || s == http.MethodPut || s == http.MethodHead || s == http.MethodPatch || s == http.MethodTrace {
 		r.Method = s
 	}
 }
 
-func (r *Request) AddHeader(s string) {
+func (r *Request) addHeader(s string) {
 	a := strings.Split(s, "&")
 	for _, header := range a {
 		h := strings.Split(header, "=")
@@ -19,7 +19,7 @@ func (r *Request) AddHeader(s string) {
 	}
 }
 
-func (r *Request) AddCookieToReq(s string) {
+func (r *Request) addCookieToReq(s string) {
 	kv := strings.Split(s, "=")
 	c := http.Cookie{
 		Name:     kv[0],

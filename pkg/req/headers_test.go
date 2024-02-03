@@ -80,7 +80,7 @@ var setCookieTests = []struct {
 func TestSettingHttpMethod(t *testing.T) {
 	for _, tc := range SetHttpMethodTests {
 		t.Run(tc.name, func(t *testing.T) {
-			r.SetHttpMethod(tc.testField)
+			r.setHttpMethod(tc.testField)
 			if tc.expected != tc.testField {
 				t.Errorf("Expected %s, got %s", tc.expected, tc.testField)
 			}

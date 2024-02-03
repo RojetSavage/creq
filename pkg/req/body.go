@@ -31,7 +31,7 @@ func mergeMaps(m ...map[string]string) map[string]string {
 	return data
 }
 
-func (r *Request) ChangeRequestBody(s string) {
+func (r *Request) changeRequestBody(s string) {
 	buf := []byte(s)
 	r.Body = io.NopCloser(bytes.NewReader(buf))
 }

@@ -137,8 +137,8 @@ func TestChangeUri(t *testing.T) {
 			expectedUrl, err := url.Parse(tc.expected)
 
 			r := NewRequest()
-			r.SetUrl(tc.original)
-			err = r.ChangeUri(tc.component, tc.s)
+			r.setUrl(tc.original)
+			err = r.changeUri(tc.component, tc.s)
 
 			if err != nil {
 				t.Fatalf("Unexpected error: %v", err)
