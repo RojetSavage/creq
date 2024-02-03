@@ -8,25 +8,31 @@ import (
 	"os"
 	"req"
 	"strings"
+	"time"
 )
 
 func RunRepl() {
 	fmt.Printf(">>> ")
-	input := []string{"REPL"}
+	readyToQuit := false
 
 	c := req.NewClient()
 	r := req.NewRequest()
 
-	for input[0] != "exit" {
-		ready := false
+	for !readyToQuit {
+		readyToSend := false
 
-		for !ready {
+		for !readyToSend {
 			printCurrentRequestInfo(r)
 			cmdLineArgs := getCommandLineArgs()
 
 			if cmdLineArgs == nil {
-				ready = true
+				readyToSend = true
 				continue
+			}
+
+			if cmdLineArgs[0] == "quit" || cmdLineArgs[0] == "q" {
+				readyToQuit = true
+				break
 			}
 
 			parseError, flags := args.ParseArgs(cmdLineArgs, true)
@@ -45,22 +51,24 @@ func RunRepl() {
 				continue
 			}
 
-			ready = readyToSend(flags)
+			readyToSend = isReadyToSend(flags)
 		}
 
-		res, err := req.SendRequest(c, r)
+		if !readyToQuit {
+			res, err := req.SendRequest(c, r)
 
-		if err != nil {
-			fmt.Println(err)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			prettyPrint(res.Body)
 		}
-
-		prettyPrint(res.Body)
 	}
 	os.Exit(0)
 }
 
 func printCurrentRequestInfo(r *req.Request) {
-	fmt.Printf("\nCurrent Request:\n%v %v \n", r.Method, r.URL.String())
+	fmt.Printf("%v\nCurrent Request:\n%v %v \n", time.Now(), r.Method, r.URL.String())
 	if r.Header != nil {
 		for k, v := range r.Header {
 			fmt.Println(k, ":", v)
@@ -95,7 +103,7 @@ func getUserInput() string {
 	return input
 }
 
-func readyToSend(flags []args.UserFlag) bool {
+func isReadyToSend(flags []args.UserFlag) bool {
 	if len(flags) == 0 {
 		return true
 	}
