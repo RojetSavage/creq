@@ -5,4 +5,6 @@ use (
 	./pkg/args
 	./pkg/logger
 	./pkg/req
-)
+	./pkg/repl
+	)
+
