@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"gcurl/pkg/repl"
 	"io"
 	"log"
 	"os"
-	"req"
 
 	"args"
+	"repl"
+	"req"
 )
 
 var (
