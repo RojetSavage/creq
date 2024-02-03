@@ -1,7 +1,7 @@
 package args
 
 import (
-	"log"
+	"errors"
 	"net/url"
 	"strings"
 	"unicode"
@@ -27,20 +27,29 @@ func init() {
 	setProgramFlags()
 }
 
-func ParseArgs(cmdLineArgs []string) []UserFlag {
+func ParseArgs(cmdLineArgs []string, inRepl bool) (error, []UserFlag) {
 	var Flags []UserFlag
+	startingIndex := 1
 
-	for i := 1; i < len(cmdLineArgs); i++ {
+	if inRepl {
+		startingIndex = 0
+	}
+
+	if len(cmdLineArgs) == 1 && cmdLineArgs[0] == " " {
+		return nil, []UserFlag{}
+	}
+
+	for i := startingIndex; i < len(cmdLineArgs); i++ {
 		var f UserFlag
 		flagExist, parsedFlag := isFlag(cmdLineArgs[i])
 		shortExist, parsedShort := isShort(cmdLineArgs[i])
 
 		//check for optional first URL
-		if !flagExist && !shortExist && i == 1 {
+		if !flagExist && !shortExist && ((inRepl && i == 0) || (!inRepl && i == 1)) {
 			_, err := url.ParseRequestURI(cmdLineArgs[i])
 
 			if err != nil {
-				log.Fatalln("Given URL is invalid. Example: http://github.com")
+				return errors.New("Given URL is invalid. Example: http://github.com"), nil
 			}
 			Flags = append(Flags, UserFlag{F: "url", Parameter: cmdLineArgs[i]})
 		}
@@ -59,7 +68,7 @@ func ParseArgs(cmdLineArgs []string) []UserFlag {
 		}
 	}
 
-	return Flags
+	return nil, Flags
 }
 
 func isFlag(s string) (bool, string) {
