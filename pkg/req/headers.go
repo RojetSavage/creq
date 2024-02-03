@@ -20,16 +20,12 @@ func (r *Request) AddHeader(s string) {
 }
 
 func (r *Request) AddCookieToReq(s string) {
-	a := strings.Split(s, "&")
-
-	for _, s := range a {
-		kv := strings.Split(s, "=")
-		c := http.Cookie{
-			Name:     kv[0],
-			Value:    kv[1],
-			HttpOnly: false,
-			Path:     r.URL.Path,
-		}
-		r.AddCookie(&c)
+	kv := strings.Split(s, "=")
+	c := http.Cookie{
+		Name:     kv[0],
+		Value:    kv[1],
+		HttpOnly: false,
+		Path:     r.URL.Path,
 	}
+	r.AddCookie(&c)
 }
