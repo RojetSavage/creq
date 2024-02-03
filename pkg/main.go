@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -11,23 +10,13 @@ import (
 	"req"
 )
 
-var (
-	runRepl bool
-)
-
-func init() {
-	if len(os.Args) == 1 {
-		runRepl = true
-	}
-}
-
 func main() {
 	if len(os.Args) > 1 {
 		_, flags := args.ParseArgs(os.Args, false)
 		err, ok := args.ValidateUserFlags(flags, false)
 
 		if !ok {
-			fmt.Println(err)
+			log.Fatal(err)
 		} else {
 			r := req.NewRequest()
 			c := req.NewClient()
