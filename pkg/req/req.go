@@ -6,22 +6,13 @@ import (
 	"net/http"
 )
 
-type Request struct {
-	isReady bool
-	http.Request
-}
-
-type Config struct {
-	DefaultUrl string `json:"defaultUrl"`
-}
-
-func NewRequest() *Request {
+func NewRequest() *RequestHandler {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:3001", nil)
-	r := Request{false, *req}
+	r := RequestHandler{false, *req}
 	return &r
 }
 
-func SendRequest(c *http.Client, r *Request) (*http.Response, error) {
+func SendRequest(c *http.Client, r *RequestHandler) (*http.Response, error) {
 	clone := cloneReq(r)
 
 	res, err := c.Do(clone)
@@ -33,7 +24,7 @@ func SendRequest(c *http.Client, r *Request) (*http.Response, error) {
 	return res, nil
 }
 
-func cloneReq(r *Request) *http.Request {
+func cloneReq(r *RequestHandler) *http.Request {
 	clone := r.Clone(r.Context())
 
 	if r.Body == nil {
@@ -73,8 +64,6 @@ func cloneReq(r *Request) *http.Request {
 	return clone
 }
 
-func (r *Request) resetRequest() {
-	n := NewRequest()
-	r = n
-	r.Method = http.MethodTrace
+func (r *RequestHandler) resetRequest() {
+	*r = *NewRequest()
 }
