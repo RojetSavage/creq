@@ -45,4 +45,3 @@ Creq takes an optional URL as the first argument or use the --url flag to explic
 ## Client Options
 | Options                 | Flag | Short | Param Required | Description                                               |
 |-------------------------|------|-------|----------------|-----------------------------------------------------------|
-| Connect Timeout        | `connect-timeout` | | true        | Sets a limit in seconds for a connection request timeout. |
