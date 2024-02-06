@@ -41,6 +41,20 @@ var tests = []struct {
 		expected:  "http://example.com:8080/path?query#fragment",
 	},
 	{
+		name:      "Add user",
+		component: "user",
+		s:         "user:password",
+		original:  "http://example.com/path?query#fragment",
+		expected:  "http://user:password@example.com/path?query#fragment",
+	},
+	{
+		name:      "Change user",
+		component: "user",
+		s:         "user:supersecretpassword",
+		original:  "http://user:password@example.com/path?query#fragment",
+		expected:  "http://user:supersecretpassword@example.com/path?query#fragment",
+	},
+	{
 		name:      "Change port",
 		component: "port",
 		s:         "8080",

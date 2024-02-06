@@ -7,17 +7,7 @@ import (
 	"strings"
 )
 
-type dismantledUrl struct {
-	scheme   string
-	user     string
-	host     string
-	port     string
-	path     string
-	query    string
-	fragment string
-}
-
-func (r *Request) setUrl(s string) error {
+func (r *RequestHandler) setUrl(s string) error {
 	url, err := url.Parse(s)
 
 	if err != nil {
@@ -75,12 +65,14 @@ func reassembleUrl(u *dismantledUrl) string {
 	return b.String()
 }
 
-func (r *Request) changeUri(urlComponent string, s string) error {
+func (r *RequestHandler) changeUri(urlComponent string, s string) error {
 	u := explodeUrl(r.URL)
 
 	switch urlComponent {
 	case "scheme":
 		u.scheme = s
+	case "user":
+		u.user = s
 	case "host":
 		u.host = s
 	case "port":

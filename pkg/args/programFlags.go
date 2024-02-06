@@ -49,6 +49,13 @@ func setProgramFlags() {
 			ReplOnly:      false,
 		},
 		{
+			Flag:          "user",
+			Short:         "u",
+			ParamRequired: true,
+			DefaultValue:  "",
+			Description:   "Sets the user and password for authentication",
+			ReplOnly:      false,
+		}, {
 			Flag:          "port",
 			Short:         "P",
 			ParamRequired: true,
@@ -83,6 +90,13 @@ func setProgramFlags() {
 			ReplOnly:      false,
 		},
 		{
+			Flag:          "header",
+			Short:         "h",
+			ParamRequired: true,
+			DefaultValue:  "",
+			Description:   "Applies header to request e.g. foo=bar",
+			ReplOnly:      false,
+		}, {
 			Flag:          "cookie",
 			Short:         "C",
 			ParamRequired: true,
