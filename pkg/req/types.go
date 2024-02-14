@@ -7,6 +7,12 @@ type RequestHandler struct {
 	http.Request
 }
 
+type ResponseOperation func(*ResponseHandler) error
+
+type ResponseOperationsQueue struct {
+	op []ResponseOperation
+}
+
 type ResponseHandler struct {
 	*http.Response
 }
