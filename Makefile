@@ -6,3 +6,6 @@ build:
 
 run:
 	go run pkg/main.go
+
+test: 
+	go test ./pkg/args ./pkg/req -v
