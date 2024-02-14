@@ -2,6 +2,8 @@ package req
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"io"
 	"strings"
 )
@@ -31,7 +33,15 @@ func mergeMaps(m ...map[string]string) map[string]string {
 	return data
 }
 
-func (r *RequestHandler) changeRequestBody(s string) {
+func (r *RequestHandler) changeRequestBody(s string) error {
 	buf := []byte(s)
-	r.Body = io.NopCloser(bytes.NewReader(buf))
+	ok := json.Valid(buf)
+
+	if ok {
+		r.Body = io.NopCloser(bytes.NewReader(buf))
+		return nil
+	} else {
+		return errors.New("Invalid JSON string provided")
+	}
+
 }
