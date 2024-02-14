@@ -43,5 +43,5 @@ Send the request as many times as required and/or continue to modify via the com
 | Dump Header                            | `dump-header` |  `D`   | true     | Writes the response headers to the specified file.  |
 
 
-Creq takes an optional URL as the first argument or use the --url flag to explicity change the url from the default. 
+Creq takes an optional URL as the first argument or use the --url flag to explicity change the url from the default. Some flags which accept an argument have a sensible default value which will be applied if an argument is omitted.
 
