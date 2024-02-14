@@ -5,30 +5,38 @@ import (
 	"fmt"
 )
 
-func ValidateUserFlags(flags []UserFlag, inRepl bool) (error, bool) {
-	if len(flags) == 0 && inRepl {
+func ValidateUserFlags(flags *[]UserFlag, inRepl bool) (error, bool) {
+	if len(*flags) == 0 && inRepl {
 		return nil, true
 	}
 
-	for i, f := range flags {
-		ok := getProgramFlag(f.F)
+	for uFlagIdx, f := range *flags {
+		err, idx := getProgramFlag(f.F)
 
-		if !ok {
+		if err != nil {
 			return errors.New(fmt.Sprintf("Unrecognised flag: %v", f.F)), false
 		}
 
-		err := validateUserFlag(f, ProgramFlags[i], inRepl)
+		applyDefaultValues(&(*flags)[uFlagIdx], ProgramFlags[idx], inRepl)
+		err = validateUserFlag((*flags)[uFlagIdx], ProgramFlags[idx], inRepl)
 
 		if err != nil {
-			return errors.New(fmt.Sprintf("Parameter not provided for flag: %v", f.F)), false
+			return err, false
 		}
 	}
 	return nil, true
 }
 
+func applyDefaultValues(uFlag *UserFlag, f flag, inRepl bool) {
+	if uFlag.Parameter == "" {
+		fmt.Println(uFlag.Parameter, f.DefaultValue)
+		uFlag.Parameter = f.DefaultValue
+	}
+}
+
 func validateUserFlag(uFlag UserFlag, f flag, inRepl bool) error {
-	if f.ParamRequired && uFlag.Parameter == "" {
-		return errors.New(fmt.Sprintf("Parameter not provided for flag: %v", uFlag.F))
+	if f.ParamAccepted && uFlag.Parameter == "" && f.DefaultValue == "" {
+		return errors.New(fmt.Sprintf("Parameter required for flag: %v", uFlag.F))
 	}
 
 	if !inRepl && f.ReplOnly {
@@ -38,11 +46,11 @@ func validateUserFlag(uFlag UserFlag, f flag, inRepl bool) error {
 	return nil
 }
 
-func getProgramFlag(s string) bool {
+func getProgramFlag(s string) (error, int) {
 	for i := 0; i < len(ProgramFlags); i++ {
 		if ProgramFlags[i].Flag == s || ProgramFlags[i].Short == s {
-			return true
+			return nil, i
 		}
 	}
-	return false
+	return errors.New("Unrecognised Flag"), -1
 }
