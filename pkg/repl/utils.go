@@ -8,11 +8,10 @@ import (
 	"os"
 	"req"
 	"strings"
-	"time"
 )
 
-func printCurrentRequestInfo(r req.RequestHandler) {
-	fmt.Printf("%v\nCurrent Request:\n%v %v \n", time.Now(), r.Method, r.URL.String())
+func PrintCurrentRequestInfo(r req.RequestHandler) {
+	fmt.Printf("\nCurrent Request:\n%v %v \n", r.Method, r.URL.String())
 	if r.Header != nil {
 		for k, v := range r.Header {
 			fmt.Println(k, ":", v)
@@ -29,7 +28,7 @@ func printCurrentRequestInfo(r req.RequestHandler) {
 	}
 }
 
-func getCommandLineArgs() []string {
+func GetCommandLineArgs() []string {
 	input := getUserInput()
 
 	if len(input) == 0 {
@@ -61,7 +60,8 @@ func isReadyToSend(flags []args.UserFlag) bool {
 	return false
 }
 
-func prettyPrint(body io.ReadCloser) {
+func PrettyPrint(body io.ReadCloser) {
+	//TODO: MAKE LOOK GOOD
 	io.Copy(os.Stdout, body)
-	fmt.Fprint(os.Stdout, "\n\n")
+	fmt.Fprint(os.Stdout, "\n")
 }
