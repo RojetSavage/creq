@@ -7,7 +7,7 @@ func setProgramFlags() {
 		{
 			Flag:          "send",
 			Short:         "s",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "sends request",
 			ReplOnly:      true,
@@ -15,7 +15,7 @@ func setProgramFlags() {
 		{
 			Flag:          "reset",
 			Short:         "x",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "returns state of http request to default",
 			ReplOnly:      true,
@@ -25,7 +25,7 @@ func setProgramFlags() {
 		{
 			Flag:          "json",
 			Short:         "j",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "",
 			Description:   "Add JSON to the req body",
 			ReplOnly:      false,
@@ -33,7 +33,7 @@ func setProgramFlags() {
 		{
 			Flag:          "data",
 			Short:         "d",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "",
 			Description:   "Add key value pairs which are marshalled into JSON and added to the req body",
 			ReplOnly:      false,
@@ -43,7 +43,7 @@ func setProgramFlags() {
 		{
 			Flag:          "url",
 			Short:         "",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "http://localhost.com:8080",
 			Description:   "Sets the URL",
 			ReplOnly:      false,
@@ -51,22 +51,22 @@ func setProgramFlags() {
 		{
 			Flag:          "user",
 			Short:         "u",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "",
 			Description:   "Sets the user and password for authentication",
 			ReplOnly:      false,
 		}, {
 			Flag:          "port",
-			Short:         "P",
-			ParamRequired: true,
+			Short:         "p",
+			ParamAccepted: true,
 			DefaultValue:  "8080",
 			Description:   "Sets the req port value",
 			ReplOnly:      false,
 		},
 		{
 			Flag:          "path",
-			Short:         "p",
-			ParamRequired: true,
+			Short:         "P",
+			ParamAccepted: true,
 			DefaultValue:  "",
 			Description:   "Appends path to req URL. Default URL is localhost.com. If URL is given as first cmd line arg, path is appended.",
 			ReplOnly:      false,
@@ -74,7 +74,7 @@ func setProgramFlags() {
 		{
 			Flag:          "scheme",
 			Short:         "s",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "http",
 			Description:   "Sets the req protocol",
 			ReplOnly:      false,
@@ -84,7 +84,7 @@ func setProgramFlags() {
 		{
 			Flag:          "c",
 			Short:         "c",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "application/json",
 			Description:   "Sets the header 'content-type'",
 			ReplOnly:      false,
@@ -92,14 +92,14 @@ func setProgramFlags() {
 		{
 			Flag:          "header",
 			Short:         "h",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "",
-			Description:   "Applies header to request e.g. foo=bar",
+			Description:   "Applies header to request e.g. foo:bar",
 			ReplOnly:      false,
 		}, {
 			Flag:          "cookie",
 			Short:         "C",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "",
 			Description:   "Sets cookie",
 			ReplOnly:      false,
@@ -108,7 +108,7 @@ func setProgramFlags() {
 		{
 			Flag:          "get",
 			Short:         "g",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
 			ReplOnly:      false,
@@ -116,7 +116,7 @@ func setProgramFlags() {
 		{
 			Flag:          "put",
 			Short:         "",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
 			ReplOnly:      false,
@@ -124,7 +124,7 @@ func setProgramFlags() {
 		{
 			Flag:          "post",
 			Short:         "",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
 			ReplOnly:      false,
@@ -132,7 +132,7 @@ func setProgramFlags() {
 		{
 			Flag:          "delete",
 			Short:         "",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
 			ReplOnly:      false,
@@ -140,7 +140,7 @@ func setProgramFlags() {
 		{
 			Flag:          "head",
 			Short:         "",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
 			ReplOnly:      false,
@@ -148,7 +148,7 @@ func setProgramFlags() {
 		{
 			Flag:          "patch",
 			Short:         "",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
 			ReplOnly:      false,
@@ -156,7 +156,7 @@ func setProgramFlags() {
 		{
 			Flag:          "trace",
 			Short:         "",
-			ParamRequired: false,
+			ParamAccepted: false,
 			DefaultValue:  "",
 			Description:   "Sets the http method",
 			ReplOnly:      false,
@@ -164,9 +164,17 @@ func setProgramFlags() {
 		{
 			Flag:          "connect-timeout",
 			Short:         "",
-			ParamRequired: true,
+			ParamAccepted: true,
 			DefaultValue:  "",
 			Description:   "Sets a limit in seconds for a connection request",
+			ReplOnly:      false,
+		},
+		{
+			Flag:          "dump-header",
+			Short:         "D",
+			ParamAccepted: false,
+			DefaultValue:  "./header-dump.txt",
+			Description:   "Writes the response headers to the specified file. Writes to ./header-dump.txt by default",
 			ReplOnly:      false,
 		},
 	}

@@ -15,8 +15,8 @@ type UserFlag struct {
 type flag struct {
 	Flag          string
 	Short         string
-	ParamRequired bool
-	DefaultValue  any
+	ParamAccepted bool
+	DefaultValue  string
 	Description   string
 	ReplOnly      bool
 }
