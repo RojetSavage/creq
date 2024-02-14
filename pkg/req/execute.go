@@ -2,6 +2,7 @@ package req
 
 import (
 	"args"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -58,31 +59,28 @@ func applyFlagToRequest(r *RequestHandler, f args.UserFlag) error {
 	case "C", "cookie":
 		r.addCookieToReq(f.Parameter)
 	case "j", "json":
-		r.addHeader(strings.Join([]string{"Content-Type", "application/json"}, "="))
+		r.addHeader(strings.Join([]string{"Content-Type", "application/json"}, ":"))
 		r.setHttpMethod(http.MethodPost)
-		r.changeRequestBody(f.Parameter)
+		err = r.changeRequestBody(f.Parameter)
 	}
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
-func ApplyFlagsToResponse(r *ResponseHandler, flags []args.UserFlag) error {
+func QueueResponseOperations(r *ResponseOperationsQueue, flags []args.UserFlag) error {
 	for _, f := range flags {
-		applyFlagToResponse(r, f)
+		queueOperation(r, f)
 	}
 	return nil
 }
 
-func applyFlagToResponse(r *ResponseHandler, f args.UserFlag) error {
+func queueOperation(r *ResponseOperationsQueue, f args.UserFlag) error {
 	var err error
 
 	switch f.F {
 	case "D", "dump-header":
-		r.dumpHeader(f.Parameter)
+		fmt.Println("adding", f.F, f.Parameter, len(f.Parameter))
+		r.addOperation(r.queueDumpHeader(f.Parameter))
 	}
 
 	return err
